@@ -1,0 +1,97 @@
+{
+	"instances": [
+        {
+            "geometry": {
+                "type": "IcosahedronGeometry",
+                "parameters": [1, 0]
+            },
+            "material": {
+                "type": "MeshPhongMaterial",
+                "parameters": {
+                    "emissive": 0,
+				    "specular": "#efefef",
+				    "shininess": 20,
+				    "flatShading": true
+                }
+            },
+            "multiplier": 200,
+			"duration": 0.4,
+			"points": [
+                [[0, 0, 0], 10],
+                [[0, 0, 0], 8],
+                [[0, 0, 0], 2],
+                [[0, 0, 0], 12]
+			]
+        },
+        {
+            "geometry": {
+                "type": "BoxGeometry",
+                "parameters": [1, 1, 1]
+            },
+            "material": {
+                "type": "MeshPhongMaterial",
+                "parameters": {
+                    "emissive": "0.5 / 3",
+				    "specular": "#efefef",
+				    "shininess": 20,
+				    "flatShading": true
+                }
+            },
+            "multiplier": 200,
+			"duration": 0.4,
+			"points": [
+                [[-10, 0, 0], 4],
+                [[-2.5, -10, 0], 4],
+                [[2.5, 10, 0], 4],
+                [[10, 0, 0], 4]
+			]
+        },
+        {
+            "geometry": {
+                "type": "TetrahedronGeometry",
+                "parameters": [1]
+            },
+            "material": {
+                "type": "MeshPhongMaterial",
+                "parameters": {
+                    "emissive": "1.5 / 3",
+				    "specular": "#efefef",
+				    "shininess": 20,
+				    "flatShading": true
+                }
+            },
+            "multiplier": 400,
+			"duration": 0.4,
+			"points": [
+                [[0, 10, 0], 10],
+                [[0, 0, 0], 10],
+                [[0, 0, 0], 10],
+                [[0, -10, 0], 10]
+			]
+        },
+        {
+            "geometry": {
+                "type": "IcosahedronGeometry",
+                "parameters": [0.8, 3]
+            },
+            "material": {
+                "type": "MeshPhongMaterial",
+                "parameters": {
+                    "emissive": "2 / 3",
+				    "specular": "#efefef",
+				    "shininess": 20,
+				    "flatShading": true
+                }
+            },
+            "multiplier": 400,
+			"duration": 0.4,
+			"points": [
+                [[0, -20, 0], 0],
+                [[0, 10, 0], 0],
+                [[0, -10, 0], 10],
+                [[0, 15, 0], 15]
+            ],
+            "rainbow": true
+        }
+    ]
+}
