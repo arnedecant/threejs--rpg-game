@@ -338,8 +338,6 @@ export default class Engine {
 
 	render() {
 
-		console.log('render engine')
-
 		// update zoom
 
 		// this.updateZoom()

@@ -55,7 +55,7 @@ class App {
 		GAME.init()
 		
 		
-		this.render()
+		// this.render()
 
 	}
 
@@ -75,12 +75,10 @@ class App {
 
 	render(timestamp) {
 
-		console.log('render app')
+		// GAME.render(timestamp)
+		// ENGINE.render(timestamp)
 
-		ENGINE.render(timestamp)
-		GAME.render(timestamp)
-
-		window.requestAnimationFrame(this.render.bind(this))
+		// window.requestAnimationFrame(this.render.bind(this))
 
 	}
 

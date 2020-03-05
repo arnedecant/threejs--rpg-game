@@ -43,6 +43,8 @@ export default class Game {
         ENGINE.scene.add(mesh)
 
         ENGINE.loader.load('../assets/models/girl.fbx', this.setupModel.bind(this))
+
+        this.render()
     }
 
     setupModel(model) {
@@ -151,22 +153,27 @@ export default class Game {
 
         const dt = this.clock.getDelta()
         
-        // console.log(dt)
+        console.log('render')
 
 
-		if (this.player.mixer!=undefined && this.mode==MODES.ACTIVE) this.player.mixer.update(dt)
+		// if (this.player.mixer!=undefined && this.mode==MODES.ACTIVE) this.player.mixer.update(dt)
 		
-		if (this.player.move && this.player.model) {
-			if (this.player.move.forward > 0) this.player.model.translateZ(dt*100)
-			this.player.model.rotateY(this.player.move.turn*dt)
-        }
+		// if (this.player.move && this.player.model) {
+		// 	if (this.player.move.forward > 0) this.player.model.translateZ(dt*100)
+		// 	this.player.model.rotateY(this.player.move.turn*dt)
+        // }
         
-		
-		if (this.player.viewpoints && this.player.viewpoint && this.player.viewpoint){
-			ENGINE.camera.position.lerp(this.player.viewpoint.getWorldPosition(new THREE.Vector3()), 0.05)
-            ENGINE.camera.quaternion.slerp(this.player.viewpoint.getWorldQuaternion(new THREE.Quaternion()), 0.05)
-            ENGINE.camera.updateProjectionMatrix()
-		}
+		// if (this.player.viewpoints && this.player.viewpoint && this.player.viewpoint){
+		// 	ENGINE.camera.position.lerp(this.player.viewpoint.getWorldPosition(new THREE.Vector3()), 0.05)
+        //     ENGINE.camera.quaternion.slerp(this.player.viewpoint.getWorldQuaternion(new THREE.Quaternion()), 0.05)
+        //     ENGINE.camera.updateProjectionMatrix()
+        // }
+        
+        ENGINE.render()
+
+        if (window.STOP) return
+
+        window.requestAnimationFrame(this.render.bind(this))
 		
 	}
 

@@ -9,7 +9,6 @@ export default class Player {
 		this.move = {}
 
 		this.init()
-		this.createViewpoints()
 
 	}
 
