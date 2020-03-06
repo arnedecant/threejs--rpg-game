@@ -86,6 +86,11 @@ class App {
 
 export default new App()
 
-window.onError = function(error){
-	console.error(JSON.stringify(error));
+// debugging helpers
+
+window.onError = (error) => console.error(JSON.stringify(error))
+window.stop = () => window.STOP = true
+window.start = (oneFrame = false) => {
+	if (!oneFrame) window.STOP = false
+	GAME.render()
 }

@@ -6,7 +6,7 @@ export default class Player {
 
 	constructor() {
 
-		this.move = {}
+		this.move = {forward: 0, turn: 0}
 
 		this.init()
 

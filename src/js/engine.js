@@ -160,12 +160,21 @@ export default class Engine {
 
 		// create a new ambient light
 
-		this.ambientLight = new THREE.AmbientLight(0xffffff)
+		// this.ambientLight = new THREE.AmbientLight(0xffffff)
+
+		// create a new hemisphere light
+
+		this.hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444)
+		this.hemisphereLight.position.set(0, 200, 0)
 
 		// create a new shadow light
 
 		this.directionalLight = new THREE.DirectionalLight(0x707070)
-		this.directionalLight.position.set(0, 20, 10)
+		this.directionalLight.position.set(0, 200, 100)
+		this.directionalLight.shadow.camera.top = 180
+		this.directionalLight.shadow.camera.bottom = -100
+		this.directionalLight.shadow.camera.left = -120
+		this.directionalLight.shadow.camera.right = 120
 		this.directionalLight.castShadow = true
 
 		// create a new back light
@@ -181,8 +190,10 @@ export default class Engine {
 
 		// add lights to the scene
 
-		this.scene.add(this.ambientLight)
+		// this.scene.add(this.ambientLight)
+		this.scene.add(this.hemisphereLight)
 		this.scene.add(this.directionalLight)
+		this.scene.add(this.spotLight)
 		// this.scene.add(this.shadowLight)
 		// this.scene.add(this.backLight)
 
