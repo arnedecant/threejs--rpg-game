@@ -40,9 +40,9 @@ class App {
 	preload() {
 
 		GAME.mode = GAME.MODES.PRELOAD
-		GAME.animations.forEach((anim) => GAME.assets.push(`../assets/animations/${ anim }.fbx`))
+		GAME.animations.forEach((animation) => GAME.assets[animation] = `../assets/animations/${ animation }.fbx`)
 
-		this.preloader = new Preloader({ assets: GAME.assets, oncomplete: this.init.bind(this) })
+		this.preloader = new Preloader({ assets: Object.values(GAME.assets), oncomplete: this.init.bind(this) })
 
 	}
 
@@ -51,11 +51,9 @@ class App {
 		ENGINE.scene.background = new THREE.Color(0xa0a0a0)
 		ENGINE.scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000)
 		
-		
 		GAME.init()
-		
-		
-		// this.render()
+	
+		this.render()
 
 	}
 
@@ -75,10 +73,12 @@ class App {
 
 	render(timestamp) {
 
-		// GAME.render(timestamp)
-		// ENGINE.render(timestamp)
+		GAME.render(timestamp)
+		ENGINE.render(timestamp)
 
-		// window.requestAnimationFrame(this.render.bind(this))
+        if (window.STOP) return
+
+		window.requestAnimationFrame(this.render.bind(this))
 
 	}
 

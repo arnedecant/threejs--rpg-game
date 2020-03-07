@@ -4,6 +4,7 @@
 
 import Player from './player'
 import JoyStick from './helpers/joystick'
+import KeyboardControls from './helpers/keyboard-controls'
 
 export default class Game {
 
@@ -11,7 +12,8 @@ export default class Game {
 
         window.STOP = false
 
-        this.clock = new THREE.Clock()
+        window.CLOCK = new THREE.Clock()
+        window.KEYBOARD = new KeyboardControls()
 
         this.MODES = window.MODES = Object.freeze({
             NONE: Symbol('none'),
@@ -24,10 +26,7 @@ export default class Game {
 
         this.mode = this.MODES.NONE
         this.animations = ['running', 'running_backwards', 'gathering', 'looking_around']
-        this.assets = []
-
-        this.player = new Player()
-		
+        this.assets = {}
 
     }
 
@@ -44,77 +43,34 @@ export default class Game {
         
         ENGINE.scene.add(mesh)
 
-        ENGINE.loader.load('../assets/models/girl.fbx', this.setupModel.bind(this))
-
-        this.render()
-        
-    }
-
-    setupModel(model) {
-
-        model.mixer = new THREE.AnimationMixer(model)
-        this.player.mixer = model.mixer
-        this.player.root = model.mixer.getRoot()
-        
-        model.name = 'Character'
-        
-        model.traverse((child) => {
-            if (!child.isMesh) return
-            child.castShadow = true
-            child.receiveShadow = true
+        window.PLAYER = this.player = new Player({
+            model: '../assets/models/girl.fbx',
+            assets: this.assets
         })
-        
-        ENGINE.scene.add(model)
-        this.player.model = model
-        this.player.walking = model.animations[0]
 
-        this.joystick = new JoyStick({ onMove: this.playerControl.bind(this), game: this })
-        
-        this.player.createViewpoints(model)
+        this.player.onLoadingFinished.addListener(this.onPlayerLoaded.bind(this))
 
-        this.loadNextAnim()
-
-    }
-
-    loadNextAnim() {
-
-        let anim = this.animations.pop()
-        let asset = this.assets.pop()
-
-        const game = this
-        
-		ENGINE.loader.load(asset, (object) => {
-
-            game.player[anim] = object.animations[0]
-            
-            if (game.assets.length > 0) game.loadNextAnim()
-            else {
-				delete game.assets;
-				game.action = 'looking_around'
-                game.mode = MODES.ACTIVE
-			}
-        })
+        // this.render()
         
     }
 
-    playerControl(forward, turn) {
-        
-        if (forward > 0 && this.player.action != 'walking') this.action = 'walking'
-        else if (forward <= 0 && this.player.action == 'walking') this.action = 'looking_around'
-        
-		this.player.move = { forward, turn }
+    onPlayerLoaded() {
+
+        delete this.assets
+        PLAYER.action = 'looking_around'
+        GAME.mode = MODES.ACTIVE
 
     }
 
 	render() {
 
-        const dt = this.clock.getDelta()
+        const dt = CLOCK.getDelta()
 
         if (this.player.mixer && this.mode == MODES.ACTIVE) this.player.mixer.update(dt)
 		
 		if (this.player.move && this.player.model) {
-			if (this.player.move.forward > 0) this.player.model.translateZ(dt * 100)
-			this.player.model.rotateY(this.player.move.turn * dt)
+			if (this.player.move.z > 0) this.player.model.translateZ(dt * 100)
+			this.player.model.rotateY(this.player.move.x * -dt)
         }
         
 		if (this.player.viewpoints && this.player.viewpoint && this.player.viewpoint){
@@ -123,36 +79,13 @@ export default class Game {
             ENGINE.camera.updateProjectionMatrix()
         }
         
+        PLAYER.render()
         ENGINE.render()
 
-        if (window.STOP) return
-
-        window.requestAnimationFrame(this.render.bind(this))
+        // window.requestAnimationFrame(this.render.bind(this))
 		
     }
     
-    set action(name){
-
-        const anim = this.player[name]
-        const action = this.player.mixer.clipAction(anim,  this.player.root)
-        
-        action.time = 0
-
-        this.player.mixer.stopAllAction()
-        
-        // if (this.player.action == 'gathering') {
-        //     delete this.player.mixer._listeners['finished']
-        // }
-
-        // if (name=='gathering'){
-        //     action.loop = THREE.LoopOnce
-        //     const game = this
-        //     this.player.mixer.addEventListener('finished', () => game.action = 'looking_around')
-        // }
-
-		this.player.action = name
-		action.fadeIn(0.5)
-		action.play()
-	}
+    
 
 }
