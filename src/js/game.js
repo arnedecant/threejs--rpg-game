@@ -3,8 +3,8 @@
 // -------------------------------------------------------------------
 
 import Player from './player'
-import JoyStick from './helpers/joystick'
-import KeyboardControls from './helpers/keyboard-controls'
+import JoyStick from './controls/joystick'
+import Keyboard from './controls/keyboard'
 
 export default class Game {
 
@@ -13,7 +13,8 @@ export default class Game {
         window.STOP = false
 
         window.CLOCK = new THREE.Clock()
-        window.KEYBOARD = new KeyboardControls()
+        window.KEYBOARD = new Keyboard()
+        window.JOYSTICK = new JoyStick()
 
         this.MODES = window.MODES = Object.freeze({
             NONE: Symbol('none'),

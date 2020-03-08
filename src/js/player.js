@@ -9,7 +9,7 @@ export default class Player {
 	constructor({ model, assets }) {
 
 		KEYBOARD.onDirection.addListener(this.onMove.bind(this))
-		// JOYSTICK.onDirection.addListener(this.onMove.bind(this))
+		JOYSTICK.onDirection.addListener(this.onMove.bind(this))
 
 		this.onLoadingFinished = new Dispatcher()
 

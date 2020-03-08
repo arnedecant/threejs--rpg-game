@@ -1,7 +1,7 @@
-import Dispatcher from "./dispatcher"
+import Dispatcher from "../helpers/dispatcher"
 import { isEqual } from "../utilities/object"
 
-export default class KeyboardControls {
+export default class Keyboard {
 
 	constructor() {
 
