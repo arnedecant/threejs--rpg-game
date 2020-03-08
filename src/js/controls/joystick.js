@@ -4,25 +4,23 @@ export default class JoyStick {
 
 	constructor(options = {}) {
 
-		this.$template = document.querySelector('template[data-name="joystick"]')
-		this.$joystick = this.$template.content.cloneNode(true)
-		this.$thumb = this.$joystick.querySelector('.joystick__thumb')
+		this.$template = document.querySelector('template[data-name="joystick"]').content.cloneNode(true)
+
+		this.$joystick = this.$template.querySelector('.joystick')
+		this.$thumb = this.$template.querySelector('.joystick__thumb')
 
 		document.body.appendChild(this.$joystick)
 
 		this.onDirection = new Dispatcher()
         
-        this.domElement = this.$thumb
-		this.maxRadius = options.maxRadius || 40
+		this.maxRadius = options.maxRadius || (this.$joystick.offsetWidth / 2)
 		this.maxRadiusSquared = this.maxRadius * this.maxRadius
-		this.onMove = options.onMove
-		this.game = options.game || window.GAME
-		this.origin = { left: this.domElement.offsetLeft, top: this.domElement.offsetTop }
+		this.origin = { left: this.$thumb.offsetLeft, top: this.$thumb.offsetTop }
         
-        if (!this.domElement) return
+        if (!this.$thumb) return
 
-        this.domElement.addEventListener('touchstart', this.tap.bind(this))
-		this.domElement.addEventListener('mousedown', this.tap.bind(this))
+        this.$thumb.addEventListener('touchstart', this.tap.bind(this))
+		this.$thumb.addEventListener('mousedown', this.tap.bind(this))
 		
 	}
 	
@@ -41,22 +39,25 @@ export default class JoyStick {
 
 		this.offset = this.getMousePosition(e)
 
+		// set events
+
 		document.ontouchmove = this.move.bind(this)
 		document.ontouchend =  this.up.bind(this)
-
 		document.onmousemove = this.move.bind(this)
 		document.onmouseup = this.up.bind(this)
 
 	}
 	
 	move(e = window.event) {
+
+		// calculate the new cursor position:
 		
 		const mouse = this.getMousePosition(e)
 
-		// calculate the new cursor position:
-
 		let left = mouse.x - this.offset.x
 		let top = mouse.y - this.offset.y
+
+		// set boundaries
 		
 		const sqMag = left * left + top * top
 
@@ -76,11 +77,17 @@ export default class JoyStick {
         
 		// set the element's new position:
 
-		this.domElement.style.top = `${ top + this.domElement.clientHeight / 2 }px`
-		this.domElement.style.left = `${ left + this.domElement.clientWidth / 2 }px`
+		this.$thumb.style.setProperty('--translateX', left + 'px')
+		this.$thumb.style.setProperty('--translateY', top + 'px')
+		// this.$thumb.style.setProperty('--shadowX', (0 - left / 8) + 'px')
+		// this.$thumb.style.setProperty('--shadowY', (0 - top / 8) + 'px')
+
+		// set normalized values
 		
-		const x = (left - this.origin.left + this.domElement.clientWidth / 2) / this.maxRadius
-		const z = 0 - (top - this.origin.top + this.domElement.clientHeight / 2) / this.maxRadius
+		const x = (left - this.origin.left + this.$thumb.clientWidth / 2) / this.maxRadius
+		const z = 0 - (top - this.origin.top + this.$thumb.clientHeight / 2) / this.maxRadius
+
+		// notify listeners
 
 		this.onDirection.notify({ x, y: 0, z })
 
@@ -88,13 +95,21 @@ export default class JoyStick {
 	
 	up(e = window.event) {
 
+		// disable events
+
 		document.ontouchmove = null
 		document.touchend = null
 		document.onmousemove = null
 		document.onmouseup = null
 
-		this.domElement.style.top = `${ this.origin.top }px`
-		this.domElement.style.left = `${ this.origin.left }px`
+		// reset thumb
+
+		this.$thumb.style.setProperty('--translateX', 0)
+		this.$thumb.style.setProperty('--translateY', 0)
+		this.$thumb.style.setProperty('--shadowX', 0)
+		this.$thumb.style.setProperty('--shadowY', 0)
+
+		// notify listeners
 
 		this.onDirection.notify({ x: 0, y: 0, z: 0 })
 
