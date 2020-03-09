@@ -2,7 +2,8 @@
 // :: Game
 // -------------------------------------------------------------------
 
-import Player from './player'
+import Player from './models/player'
+import Environment from './models/environment'
 import JoyStick from './controls/joystick'
 import Keyboard from './controls/keyboard'
 
@@ -13,8 +14,14 @@ export default class Game {
         window.STOP = false
 
         window.CLOCK = new THREE.Clock()
-        window.KEYBOARD = new Keyboard()
-        window.JOYSTICK = new JoyStick()
+
+        this.$interface = document.querySelector('main.interface')
+
+        this.$buttons = {
+            camera: this.$interface.querySelector('[data-button="camera"]'),
+            interact: this.$interface.querySelector('[data-button="interact"]'),
+            inventory: this.$interface.querySelector('[data-button="inventory"]')
+        }
 
         this.MODES = window.MODES = Object.freeze({
             NONE: Symbol('none'),
@@ -26,12 +33,17 @@ export default class Game {
         })
 
         this.mode = this.MODES.NONE
-        this.animations = ['running', 'running_backwards', 'gathering', 'looking_around']
+        this.animations = ['running', 'running_backwards', 'gathering', 'looking_around', 'dying']
         this.assets = {}
+
+        this.$interface.addEventListener('click', this.click.bind(this))
 
     }
 
 	init() {
+
+        window.KEYBOARD = new Keyboard()
+        window.JOYSTICK = new JoyStick()
 
         this.mode = MODES.INITIALISING
 
@@ -44,131 +56,60 @@ export default class Game {
         
         ENGINE.scene.add(mesh)
 
-        window.PLAYER = this.player = new Player({
-            model: '../assets/models/girl.fbx',
-            assets: this.assets
+        window.ENVIRONMENT = this.environment = new Environment({
+            model: '../assets/environments/factory.fbx'
         })
 
-        this.createDummyEnvironment()
-
-        this.player.onLoadingFinished.addListener(this.onPlayerLoaded.bind(this))
-
-        // this.render()
+        this.environment.onLoadingFinished.addListener(this.onEnvironmentLoaded.bind(this))
         
     }
 
     onPlayerLoaded() {
 
         delete this.assets
+
         PLAYER.action = 'looking_around'
         GAME.mode = MODES.ACTIVE
 
     }
 
-    createDummyEnvironment() {
+    onEnvironmentLoaded() {
 
-		const env = new THREE.Group()
-		env.name = "Environment"
-		ENGINE.scene.add(env)
-		
-		const geometry = new THREE.BoxBufferGeometry(150, 150, 150)
-		const material = new THREE.MeshBasicMaterial({ color: 0x333333 })
-		
-		for (let x = -1000; x < 1000; x += 300) {
-			for (let z =- 1000; z < 1000; z += 300) {
+        window.PLAYER = this.player = new Player({
+            model: '../assets/models/girl.fbx',
+            assets: this.assets
+        })
 
-				const block = new THREE.Mesh(geometry, material)
-                
-                block.position.set(x, 75, z)
-				env.add(block)
-            
-            }
-		}
-		
-        this.environmentProxy = env
-        
+        this.player.onLoadingFinished.addListener(this.onPlayerLoaded.bind(this))
+
     }
 
-    checkIntersection(options = {}) {
+    click(e) {
 
-        let playerPos = options.playerPos || PLAYER.model.position.clone()
-        let direction = options.direction || PLAYER.model.getWorldDirection()
-        let threshold = options.threshold || 50
+        if (e.target == this.$interface) e.preventDefault()
 
-        let modifier = options.playerPosMod || { x: 0, y: 0, z: 0 }
-        
-        for (let axis in modifier) playerPos[axis] += modifier[axis]
-
-        const raycaster = new THREE.Raycaster(playerPos, direction)
-        
-        for (let box of this.environmentProxy.children) {
-
-            const intersect = raycaster.intersectObject(box)
-
-            if (intersect.length <= 0) continue
-            if (intersect[0].distance < threshold) return intersect[0]
-
+        switch (e.target.dataset.button) {
+            case 'camera':
+                this.player.toggleView()
+                break
+            case 'interact':
+                break
+            case 'inventory':
+                break
+            default: 
+                return
         }
-
-        return false
-
-    }
-    
-    movePlayer(dt) {
-        
-        let intersect = false
-        let playerPos = PLAYER.model.position.clone()
-        let direction = PLAYER.model.getWorldDirection()
-
-        playerPos.y += 60
-
-        // front
-        
-        intersect = this.checkIntersection({ playerPos, direction })
-        if (!intersect && this.player.move.z > 0) this.player.model.translateZ(dt * 100)
-        
-        // left
-
-        // direction.set(-1, 0, 0)
-        // direction.applyMatrix4(this.player.model.matrix)
-        // direction.normalize()
-
-        // intersect = this.checkIntersection({ playerPos, direction, threshold: 80 })
-        // if (!intersect) this.player.model.translateX(0 - (intersect.distance - 80))
-
-        // // right
-
-        // direction.set(1, 0, 0)
-		// direction.applyMatrix4(this.player.model.matrix)
-        // direction.normalize()
-        
-        // intersect = this.checkIntersection({ playerPos, direction, threshold: 80 })
-        // if (!intersect) this.player.model.translateX(intersect.distance - 80)
 
     }
 
 	render() {
 
+        if (this.mode != MODES.ACTIVE) return
+
         const dt = CLOCK.getDelta()
-
-        if (this.player.mixer && this.mode == MODES.ACTIVE) this.player.mixer.update(dt)
-		
-		if (this.player.move && this.player.model) {
-            this.movePlayer(dt)
-			// if (this.player.move.z > 0) this.player.model.translateZ(dt * 100)
-			this.player.model.rotateY(this.player.move.x * -dt)
-        }
         
-		if (this.player.viewpoints && this.player.viewpoint && this.player.viewpoint){
-			ENGINE.camera.position.lerp(this.player.viewpoint.getWorldPosition(new THREE.Vector3()), 0.05)
-            ENGINE.camera.quaternion.slerp(this.player.viewpoint.getWorldQuaternion(new THREE.Quaternion()), 0.05)
-            ENGINE.camera.updateProjectionMatrix()
-        }
-        
-        PLAYER.render()
-        ENGINE.render()
-
-        // window.requestAnimationFrame(this.render.bind(this))
+        PLAYER.render(dt)
+        ENGINE.render(dt)
 		
     }
     

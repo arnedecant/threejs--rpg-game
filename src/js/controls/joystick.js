@@ -9,7 +9,7 @@ export default class JoyStick {
 		this.$joystick = this.$template.querySelector('.joystick')
 		this.$thumb = this.$template.querySelector('.joystick__thumb')
 
-		document.body.appendChild(this.$joystick)
+		GAME.$interface.appendChild(this.$joystick)
 
 		this.onDirection = new Dispatcher()
         
@@ -79,8 +79,8 @@ export default class JoyStick {
 
 		this.$thumb.style.setProperty('--translateX', left + 'px')
 		this.$thumb.style.setProperty('--translateY', top + 'px')
-		// this.$thumb.style.setProperty('--shadowX', (0 - left / 8) + 'px')
-		// this.$thumb.style.setProperty('--shadowY', (0 - top / 8) + 'px')
+		this.$thumb.style.setProperty('--shadowX', (0 - left / 8) + 'px')
+		this.$thumb.style.setProperty('--shadowY', (0 - top / 8) + 'px')
 
 		// set normalized values
 		

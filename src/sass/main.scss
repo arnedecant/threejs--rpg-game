@@ -9,13 +9,14 @@
 // @import "base/_normalize";
 // @import "base/_typography";
 // @import "base/_animations";
-@import "base/_layout";
 // @import "base/_images";
 // @import "base/_lists";
 
+@import "components/_button";
+@import "base/_layout";
+
 // Components
 
-// @import "components/_buttons";
 // @import "components/_image";
 // @import "components/_navigation";
 // @import "components/_header";

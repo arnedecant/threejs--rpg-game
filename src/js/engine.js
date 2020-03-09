@@ -347,7 +347,7 @@ export default class Engine {
 	add(mesh) { this.scene.add(mesh) }
 	remove(mesh) { this.scene.remove(mesh) }
 
-	render() {
+	render(dt) {
 
 		// update zoom
 
