@@ -8,26 +8,31 @@
     --shadowX: 0;
     --shadowY: 0;
 
-    // position: fixed; 
-    // bottom: 35px; 
-    // left: 50%; 
-    // transform: translateX(-50%);
-
     display: flex;
     align-items: center;
     justify-content: center;
     width: 80px; 
     height: 80px; 
 
-    background-color: rgba(126, 126, 126, 0.5); 
-    border: var(--color-primary) solid 5px;
+    background-color: rgba(var(--rgb-default), 0.25); 
+    border: var(--color-text) solid 5px;
 }
 
 .joystick__thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 50%; 
     height: 50%; 
+
+    color: var(--color-primary);
     background-color: var(--color-text);
-    border: var(--color-primary) solid 3px;
-    box-shadow: var(--shadowX, 0) var(--shadowY, 0) 0px 0 var(--color-primary);
-    transform: translate(var(--translateX, 0), var(--translateY, 0))
+    border: var(--color-text) solid 2px;
+    // box-shadow: var(--shadowX, 0) var(--shadowY, 0) 5px 0 var(--color-text);
+
+    transform: translate(var(--translateX, 0), var(--translateY, 0));
+}
+
+.joystick__thumb i {
+    transform: rotate(45deg);
 }

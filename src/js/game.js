@@ -23,7 +23,7 @@ export default class Game {
             inventory: this.$interface.querySelector('[data-button="inventory"]')
         }
 
-        this.MODES = window.MODES = Object.freeze({
+        window.MODES = Object.freeze({
             NONE: Symbol('none'),
 			PRELOAD: Symbol('preload'),
 			INITIALISING: Symbol('initialising'),
@@ -32,8 +32,9 @@ export default class Game {
 			GAMEOVER: Symbol('gameover')
         })
 
-        this.mode = this.MODES.NONE
-        this.animations = ['running', 'running_backwards', 'gathering', 'looking_around', 'dying']
+        this.mode = MODES.NONE
+        // this.animations = ['ascend-stairs', 'climb-ladder', 'climb-rope', 'gather-objects', 'look-around', 'punch', 'push-button', 'run', 'stumble-backwards']
+        this.animations = ['ascend-stairs', 'gather-objects', 'look-around', 'push-button', 'run', 'stumble-backwards']
         this.assets = {}
 
         this.$interface.addEventListener('click', this.click.bind(this))
@@ -68,7 +69,7 @@ export default class Game {
 
         delete this.assets
 
-        PLAYER.action = 'looking_around'
+        PLAYER.action = 'look-around'
         GAME.mode = MODES.ACTIVE
 
     }

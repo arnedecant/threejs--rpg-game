@@ -39,7 +39,7 @@ class App {
 
 	preload() {
 
-		GAME.mode = GAME.MODES.PRELOAD
+		GAME.mode = MODES.PRELOAD
 		GAME.animations.forEach((animation) => GAME.assets[animation] = `../assets/animations/${ animation }.fbx`)
 
 		this.preloader = new Preloader({ assets: Object.values(GAME.assets), oncomplete: this.init.bind(this) })
