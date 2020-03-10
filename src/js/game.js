@@ -2,6 +2,7 @@
 // :: Game
 // -------------------------------------------------------------------
 
+import Interface from './components/interface'
 import Player from './models/player'
 import Environment from './models/environment'
 import JoyStick from './controls/joystick'
@@ -15,13 +16,8 @@ export default class Game {
 
         window.CLOCK = new THREE.Clock()
 
-        this.$interface = document.querySelector('main.interface')
-
-        this.$buttons = {
-            camera: this.$interface.querySelector('[data-button="camera"]'),
-            interact: this.$interface.querySelector('[data-button="interact"]'),
-            inventory: this.$interface.querySelector('[data-button="inventory"]')
-        }
+        window.INTERFACE = new Interface('main.interface')
+        INTERFACE.onClick.addListener(this.click.bind(this))
 
         window.MODES = Object.freeze({
             NONE: Symbol('none'),
@@ -36,8 +32,6 @@ export default class Game {
         // this.animations = ['ascend-stairs', 'climb-ladder', 'climb-rope', 'gather-objects', 'look-around', 'punch', 'push-button', 'run', 'stumble-backwards']
         this.animations = ['ascend-stairs', 'gather-objects', 'look-around', 'push-button', 'run', 'stumble-backwards']
         this.assets = {}
-
-        this.$interface.addEventListener('click', this.click.bind(this))
 
     }
 
@@ -87,19 +81,7 @@ export default class Game {
 
     click(e) {
 
-        if (e.target == this.$interface) e.preventDefault()
-
-        switch (e.target.dataset.button) {
-            case 'camera':
-                this.player.toggleView()
-                break
-            case 'interact':
-                break
-            case 'inventory':
-                break
-            default: 
-                return
-        }
+        
 
     }
 

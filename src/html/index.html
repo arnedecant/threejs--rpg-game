@@ -124,9 +124,11 @@
 </head>
 <body>
 
+	@@include('./components/item.html')
 	@@include('./controls/joystick.html')
 
-	<main class="interface">
+	<main class="interface" data-component="interface">
+		<ul class="inventory" data-component="inventory"></ul>
 		<button class="btn btn-round align__bottom-left" data-button="inventory"><i class="fas fa-briefcase"></i></button>
 		<button class="btn btn-round align__bottom-right" data-button="interact"><i class="fas fa-hand-point-up"></i></button>
 		<button class="btn btn-round align__top-right" data-button="camera"><i class="fas fa-video"></i></button>

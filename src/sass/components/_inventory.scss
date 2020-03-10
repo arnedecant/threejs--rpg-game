@@ -1,0 +1,76 @@
+.inventory, .inventory * {
+    user-select: none;
+}
+
+.inventory {
+    --cols: 3;
+    --gap: 0.5rem;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    position: fixed;
+    bottom: 6rem;
+    left: 2rem;
+    z-index: 9999;
+
+    width: calc(100% - 4rem);
+    max-width: 14rem;
+    padding: calc(var(--gap) / 2);
+
+    background-color: var(--color-secondary);
+    border-radius: var(--border-radius);
+
+    opacity: 0;
+    transform: translate(-50%, 75%) scale(0);
+
+    transition: .2s ease;
+    transition-property: transform, opacity
+}
+
+.inventory.open {
+    opacity: 1;
+    transform: translate(0, 0) scale(1)
+}
+
+.inventory > li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: calc(100% / var(--cols) - var(--gap));
+    height: 4rem;
+    margin: calc(var(--gap) / 2);
+
+    border: 1px solid rgba(var(--rgb-primary), 0.25);
+    border-radius: var(--border-radius);
+
+    overflow: hidden;
+}
+
+.inventory > li[data-name] {
+    cursor: pointer;
+    transition: .2s ease;
+    transition-property: border, transform;
+}
+
+.inventory > li img {
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.inventory > li[data-name]:hover {
+    border-color: rgba(var(--rgb-primary), 0.5);
+}
+
+.inventory > li[data-name]:hover img {
+    opacity: 1;
+}
+
+.inventory > li[data-name]:active {
+    transform: scale(0.9);
+}

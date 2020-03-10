@@ -83,16 +83,10 @@ export default class Player extends Model {
 		const position = this.model.position.clone()
 		const direction = new THREE.Vector3(0, -1, 0) // cast down
 
-		pos.y += 200
+		position.y += 200
 
 		const intersect = this.checkIntersection({ position, direction })
-		if (intersect) this.model.position.y = position.y - intersect[0].distance
-
-		// const raycaster = new THREE.Raycaster(position, direction)
-		// const intersect = raycaster.intersectObject(GAME.environment.proxy)
-
-		// if (intersect.length <= 0) return
-		// this.model.position.y = position.y - intersect[0].distance
+		if (intersect) this.model.position.y = position.y - intersect.distance
 
 	}
 	
@@ -130,8 +124,8 @@ export default class Player extends Model {
     
     OnControlsInput({ x, y, z }) {
 
-		if (z > 0 && (this.action != 'walk' && this.action != 'run')) this.action = 'walk'
-        else if (z <= 0 && (this.action == 'walk' || this.action == 'run')) this.action = 'look-around'
+		if (z != 0 && (this.action != 'walk' && this.action != 'run')) this.action = 'walk'
+        else if (z == 0 && (this.action == 'walk' || this.action == 'run')) this.action = 'look-around'
         
 		this.direction = { x, y, z }
         
@@ -175,6 +169,7 @@ export default class Player extends Model {
         }
 
 		this._animation = name
+		action.timeScale = (name == 'walk' && this.direction.z < 0) ? -0.3 : 1
 		action.fadeIn(0.5)
 		action.play()
 
@@ -197,6 +192,9 @@ export default class Player extends Model {
         const direction = options.direction || this.model.getWorldDirection(new THREE.Vector3())
 		const threshold = options.threshold || undefined
 		const environment = options.environment || GAME.environment.proxy
+
+		if (options.modifier) Object.keys(options.modifier).forEach((key) => position[key] += options.modifier[key])
+
 		const raycaster = new THREE.Raycaster(position, direction)
 		const intersect = raycaster.intersectObject(environment)
 
@@ -220,11 +218,13 @@ export default class Player extends Model {
 		let direction = this.model.getWorldDirection(new THREE.Vector3())
 		
 		position.y += 60
+		if (this.direction.z < 0) direction.negate()
 
         // front boundary & move across z-axis
         
         intersect = this.checkIntersection({ position, direction, environment, threshold: 50 })
-        if (!intersect && this.direction.z > 0) this.model.translateZ(dt * this.velocity)
+		if (!intersect && this.direction.z > 0) this.model.translateZ(dt * this.velocity)
+		else if (!intersect && this.direction.z < 0) this.model.translateZ(-dt * 40)
 
         // rotate around x-axis
 
@@ -253,7 +253,7 @@ export default class Player extends Model {
 		//cast down
 
 		direction.set(0, -1, 0)
-		position += 200
+		position.y += 200
 		intersect = this.checkIntersection({ position, direction, environment })
 
 		// console.log(intersect)
@@ -273,8 +273,6 @@ export default class Player extends Model {
 
 				// falling down
 
-				console.log('should fall down now...')
-
 				if (this.velocityY == undefined) this.velocityY = 0
 
 				this.velocityY += dt * gravity
@@ -291,7 +289,7 @@ export default class Player extends Model {
 		// apply running animation if the player
 		// has been walking for over a second
 		
-		if (this.action != 'walk') return
+		if (this.action != 'walk' || this.direction.z <= 0) return
 		
 		const elapsedTime = Date.now() - this.actionTime
 		if (elapsedTime > 1000) this.action = 'run'

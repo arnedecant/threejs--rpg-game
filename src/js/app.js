@@ -13,7 +13,7 @@ class App {
 		// create new engine: setup scene, camera & lighting
 		// and load vertex and fragment shaders in memory
 
-		window.ENGINE = new Engine({ container: document.body, debug: true })
+		window.ENGINE = new Engine({ container: document.body })
 		window.GAME = new Game()
 		window.APP = this
 		window.SHADERS = {

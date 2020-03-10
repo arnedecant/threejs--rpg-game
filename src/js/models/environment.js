@@ -32,12 +32,12 @@ export default class Environment extends Model {
             if (name.includes('main')) {
                 child.castShadow = true
 			    child.receiveShadow = true
+            } else if (name.includes('environmentproxy')) {
+                child.material.visible = false
+                this.proxy = child
             } else if (name.includes('door-proxy')) {
                 child.material.visible = false
                 door.proxy.push(child)
-            } else if (name.includes('proxy')) {
-                child.material.visible = false
-                this.proxy = child
             } else if (name.includes('door')) {
                 door.doors.push(child)
             } else if (child.name.includes('fan')) {

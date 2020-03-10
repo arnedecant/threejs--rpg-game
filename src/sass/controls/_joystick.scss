@@ -14,8 +14,8 @@
     width: 80px; 
     height: 80px; 
 
-    background-color: rgba(var(--rgb-default), 0.25); 
-    border: var(--color-text) solid 5px;
+    background-color: rgba(var(--rgb-default), 0.2); 
+    border: var(--color-secondary) solid 5px;
 }
 
 .joystick__thumb {
@@ -26,9 +26,9 @@
     height: 50%; 
 
     color: var(--color-primary);
-    background-color: var(--color-text);
-    border: var(--color-text) solid 2px;
-    // box-shadow: var(--shadowX, 0) var(--shadowY, 0) 5px 0 var(--color-text);
+    background-color: var(--color-secondary);
+    border: var(--color-secondary) solid 2px;
+    // box-shadow: var(--shadowX, 0) var(--shadowY, 0) 5px 0 var(--color-secondary);
 
     transform: translate(var(--translateX, 0), var(--translateY, 0));
 }

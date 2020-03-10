@@ -9,7 +9,7 @@ export default class JoyStick {
 		this.$joystick = this.$template.querySelector('.joystick')
 		this.$thumb = this.$template.querySelector('.joystick__thumb')
 
-		GAME.$interface.appendChild(this.$joystick)
+		INTERFACE.element.appendChild(this.$joystick)
 
 		this.onDirection = new Dispatcher()
         

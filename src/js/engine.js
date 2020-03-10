@@ -66,7 +66,7 @@ export default class Engine {
 
 		// add fog to the scene
 
-		this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950)
+		this.scene.fog = new THREE.Fog(0x605050, 500, 1500)
 
 		// create the renderer
 
@@ -171,10 +171,12 @@ export default class Engine {
 
 		this.directionalLight = new THREE.DirectionalLight(0x707070)
 		this.directionalLight.position.set(0, 200, 100)
-		this.directionalLight.shadow.camera.top = 180
-		this.directionalLight.shadow.camera.bottom = -100
-		this.directionalLight.shadow.camera.left = -120
-		this.directionalLight.shadow.camera.right = 120
+		this.directionalLight.shadow.camera.top = 3000
+		this.directionalLight.shadow.camera.bottom = -3000
+		this.directionalLight.shadow.camera.left = -3000
+		this.directionalLight.shadow.camera.right = 3000
+		this.directionalLight.shadow.mapSize.width = 2048
+		this.directionalLight.shadow.mapSize.height = 2048
 		this.directionalLight.castShadow = true
 
 		// create a new back light
@@ -185,15 +187,15 @@ export default class Engine {
 
 		// create a new spot light
 
-		this.spotLight = new THREE.SpotLight(0xffffff, 1, 80, Math.PI * 0.25, 1, 2)
-		this.spotLight.position.set(0, 40, 0)
+		// this.spotLight = new THREE.SpotLight(0xffffff, 1, 80, Math.PI * 0.25, 1, 2)
+		// this.spotLight.position.set(0, 40, 0)
 
 		// add lights to the scene
 
 		// this.scene.add(this.ambientLight)
 		this.scene.add(this.hemisphereLight)
 		this.scene.add(this.directionalLight)
-		this.scene.add(this.spotLight)
+		// this.scene.add(this.spotLight)
 		// this.scene.add(this.shadowLight)
 		// this.scene.add(this.backLight)
 
