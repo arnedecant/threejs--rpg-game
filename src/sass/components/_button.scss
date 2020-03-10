@@ -7,6 +7,14 @@ a *, button * {
     transform: translate(0, var(--y));
 }
 
+.btn[disabled] {
+    pointer-events: none;
+}
+
+.btn[disabled] i {
+    opacity: 0.2;
+}
+
 .btn {
     --y: 4px;
 

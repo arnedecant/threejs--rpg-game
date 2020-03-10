@@ -104,10 +104,10 @@ export default class JoyStick {
 
 		// reset thumb
 
-		this.$thumb.style.setProperty('--translateX', 0)
-		this.$thumb.style.setProperty('--translateY', 0)
-		this.$thumb.style.setProperty('--shadowX', 0)
-		this.$thumb.style.setProperty('--shadowY', 0)
+		this.$thumb.style.setProperty('--translateX', 0 + 'px')
+		this.$thumb.style.setProperty('--translateY', 0 + 'px')
+		this.$thumb.style.setProperty('--shadowX', 0 + 'px')
+		this.$thumb.style.setProperty('--shadowY', 0 + 'px')
 
 		// notify listeners
 

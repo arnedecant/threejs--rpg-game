@@ -17,7 +17,6 @@ export default class Inventory extends Component {
         this.onToggle = new Dispatcher()
 
         this.clear()
-        this.add('usb')
 
     }
     
@@ -28,7 +27,9 @@ export default class Inventory extends Component {
             return
         }
 
-        this.items.push(new Item(name))
+        if (!GAME || GAME.items[name]) return
+
+        this.items.push(GAME.items[name])
         this._fill()
 
     }
@@ -87,9 +88,7 @@ export default class Inventory extends Component {
     
     toggle() {
 
-        this.state = !this.state
-
-        if (this.state) this.open()
+        if (!this.state) this.open()
         else this.close()
 
     }

@@ -1,4 +1,5 @@
 import Model from "../base/model"
+import Dispatcher from "../helpers/dispatcher"
 
 // -------------------------------------------------------------------
 // :: Player
@@ -6,12 +7,14 @@ import Model from "../base/model"
 
 export default class Player extends Model {
 
-	constructor({ model, assets }) {
+	constructor({ path, assets }) {
 
-		super({ model })
+		super({ path, name: 'Character' })
 
-		KEYBOARD.onDirection.addListener(this.OnControlsInput.bind(this))
-		JOYSTICK.onDirection.addListener(this.OnControlsInput.bind(this))
+		this.onMove = new Dispatcher()
+
+		KEYBOARD.onDirection.addListener(this.onControlsInput.bind(this))
+		JOYSTICK.onDirection.addListener(this.onControlsInput.bind(this))
 
 		this.direction = KEYBOARD.direction
 
@@ -25,15 +28,15 @@ export default class Player extends Model {
 
 	}
 
-	setupModel(model) {
+	setup(mesh) {
 
-        model.mixer = new THREE.AnimationMixer(model)
-        this.mixer = model.mixer
-        this.root = model.mixer.getRoot()
+        mesh.mixer = new THREE.AnimationMixer(mesh)
+        this.mixer = mesh.mixer
+        this.root = mesh.mixer.getRoot()
         
-        model.name = 'Character'
+        mesh.name = this.name
         
-        model.traverse((child) => {
+        mesh.traverse((child) => {
 
 			if (!child.isMesh) return
 			
@@ -42,17 +45,12 @@ export default class Player extends Model {
 			
         })
         
-		ENGINE.scene.add(model)
+		ENGINE.scene.add(mesh)
 		
-        this.model = model
-        this._animations['walk'] = model.animations[0]
-
-        // this.joystick = new JoyStick({ onMove: this.playerControl.bind(this), game: this })
+        this.mesh = mesh
+        this._animations['walk'] = mesh.animations[0]
         
-        this.createViewpoints(model)
-
-		// this.loadNextAnimation()
-		
+        this.createViewpoints(mesh)
 		this.loadAnimations()
 
 	}
@@ -80,17 +78,19 @@ export default class Player extends Model {
 
 	resetPosition() {
 
-		const position = this.model.position.clone()
+		this.action = 'look-around'
+
+		const position = this.mesh.position.clone()
 		const direction = new THREE.Vector3(0, -1, 0) // cast down
 
 		position.y += 200
 
 		const intersect = this.checkIntersection({ position, direction })
-		if (intersect) this.model.position.y = position.y - intersect.distance
+		if (intersect) this.mesh.position.y = position.y - intersect.distance
 
 	}
 	
-	createViewpoints(parent = this.model) {
+	createViewpoints(parent = this.mesh) {
 
 		const front = new THREE.Object3D()
 		front.position.set(112, 100, 200)
@@ -122,7 +122,7 @@ export default class Player extends Model {
 
 	}
     
-    OnControlsInput({ x, y, z }) {
+    onControlsInput({ x, y, z }) {
 
 		if (z != 0 && (this.action != 'walk' && this.action != 'run')) this.action = 'walk'
         else if (z == 0 && (this.action == 'walk' || this.action == 'run')) this.action = 'look-around'
@@ -188,8 +188,8 @@ export default class Player extends Model {
 
 	checkIntersection(options = {}) {
 
-		const position = options.position || this.model.position.clone()
-        const direction = options.direction || this.model.getWorldDirection(new THREE.Vector3())
+		const position = options.position || this.mesh.position.clone()
+        const direction = options.direction || this.mesh.getWorldDirection(new THREE.Vector3())
 		const threshold = options.threshold || undefined
 		const environment = options.environment || GAME.environment.proxy
 
@@ -214,8 +214,8 @@ export default class Player extends Model {
 		const environment = GAME.environment.proxy
 		
 		let intersect = false
-		let position = this.model.position.clone()
-		let direction = this.model.getWorldDirection(new THREE.Vector3())
+		let position = this.mesh.position.clone()
+		let direction = this.mesh.getWorldDirection(new THREE.Vector3())
 		
 		position.y += 60
 		if (this.direction.z < 0) direction.negate()
@@ -223,68 +223,68 @@ export default class Player extends Model {
         // front boundary & move across z-axis
         
         intersect = this.checkIntersection({ position, direction, environment, threshold: 50 })
-		if (!intersect && this.direction.z > 0) this.model.translateZ(dt * this.velocity)
-		else if (!intersect && this.direction.z < 0) this.model.translateZ(-dt * 40)
+		if (!intersect && this.direction.z > 0) this.mesh.translateZ(dt * this.velocity)
+		else if (!intersect && this.direction.z < 0) this.mesh.translateZ(-dt * 40)
 
         // rotate around x-axis
 
-        this.model.rotateY(this.direction.x * -dt)
+        this.mesh.rotateY(this.direction.x * -dt)
         
         // left boundary
 
         direction.set(-1, 0, 0)
-        direction.applyMatrix4(this.model.matrix)
+        direction.applyMatrix4(this.mesh.matrix)
         direction.normalize()
 
         intersect = this.checkIntersection({ position, direction, environment, threshold })
-        if (intersect) this.model.translateX(0 - (intersect.distance - threshold))
+        if (intersect) this.mesh.translateX(0 - (intersect.distance - threshold))
 
         // right boundary
 
         direction.set(1, 0, 0)
-		direction.applyMatrix4(this.model.matrix)
+		direction.applyMatrix4(this.mesh.matrix)
         direction.normalize()
         
         intersect = this.checkIntersection({ position, direction, environment, threshold })
-		if (intersect) this.model.translateX(intersect.distance - threshold)
+		if (intersect) this.mesh.translateX(intersect.distance - threshold)
 
 		// bottom boundary
-
-		//cast down
 
 		direction.set(0, -1, 0)
 		position.y += 200
 		intersect = this.checkIntersection({ position, direction, environment })
 
-		// console.log(intersect)
-
 		if (intersect) {
 
 			const targetY = position.y - intersect.distance
 
-			if (targetY > this.model.position.y) {
+			if (targetY > this.mesh.position.y) {
 
 				// going up
 
-				this.model.position.y = 0.8 * this.model.position.y + 0.2 * targetY
+				this.mesh.position.y = 0.8 * this.mesh.position.y + 0.2 * targetY
 				this.velocityY = 0
 
-			}else if (targetY < this.model.position.y){
+			}else if (targetY < this.mesh.position.y){
 
 				// falling down
 
 				if (this.velocityY == undefined) this.velocityY = 0
 
 				this.velocityY += dt * gravity
-				this.model.position.y -= this.velocityY
+				this.mesh.position.y -= this.velocityY
 
-				if (this.model.position.y < targetY) {
+				if (this.mesh.position.y < targetY) {
 					this.velocityY = 0
-					this.model.position.y = targetY
+					this.mesh.position.y = targetY
 				}
 			}
 
 		}
+
+		// notify listeners
+
+		this.onMove.notify(this)
 
 		// apply running animation if the player
 		// has been walking for over a second
@@ -298,7 +298,7 @@ export default class Player extends Model {
 
 	render(dt) {
 
-		if (!this.model) return
+		if (!this.mesh) return
 
 		// update animation and movement
 

@@ -3,22 +3,24 @@
 }
 
 .joystick {
-    --translateX: 0;
-    --translateY: 0;
-    --shadowX: 0;
-    --shadowY: 0;
+    --translateX: 0px;
+    --translateY: 0px;
+    --shadowX: 0px;
+    --shadowY: 0px;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px; 
-    height: 80px; 
+    width: 6rem; 
+    height: 6rem; 
 
     background-color: rgba(var(--rgb-default), 0.2); 
     border: var(--color-secondary) solid 5px;
 }
 
 .joystick__thumb {
+    --y: 4px;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,7 +30,7 @@
     color: var(--color-primary);
     background-color: var(--color-secondary);
     border: var(--color-secondary) solid 2px;
-    // box-shadow: var(--shadowX, 0) var(--shadowY, 0) 5px 0 var(--color-secondary);
+    box-shadow: var(--shadowX, 0px) var(--shadowY, 0px) 0 0 var(--color-primary);
 
     transform: translate(var(--translateX, 0), var(--translateY, 0));
 }

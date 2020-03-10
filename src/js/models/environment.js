@@ -13,15 +13,15 @@ export default class Environment extends Model {
 
     }
 
-	setupModel(model) {
+	setup(mesh) {
 
-        model.receiveShadow = true
-        model.scale.set(0.8, 0.8, 0.8)
-        model.name = 'Environment'
+        mesh.receiveShadow = true
+        mesh.scale.set(0.8, 0.8, 0.8)
+        mesh.name = 'Environment'
 
         let door = { trigger: null, proxy: [], doors: [] }
         
-        model.traverse((child) => {
+        mesh.traverse((child) => {
 
             let name = child.name.toLowerCase()
 
@@ -48,9 +48,9 @@ export default class Environment extends Model {
 
         })
         
-        ENGINE.scene.add(model)
+        ENGINE.scene.add(mesh)
         
-        this.model = model
+        this.mesh = mesh
         this.onLoadingFinished.notify()
 
     }

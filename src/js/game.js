@@ -7,6 +7,7 @@ import Player from './models/player'
 import Environment from './models/environment'
 import JoyStick from './controls/joystick'
 import Keyboard from './controls/keyboard'
+import Item from './components/item'
 
 export default class Game {
 
@@ -29,9 +30,10 @@ export default class Game {
         })
 
         this.mode = MODES.NONE
-        // this.animations = ['ascend-stairs', 'climb-ladder', 'climb-rope', 'gather-objects', 'look-around', 'punch', 'push-button', 'run', 'stumble-backwards']
-        this.animations = ['ascend-stairs', 'gather-objects', 'look-around', 'push-button', 'run', 'stumble-backwards']
+
         this.assets = {}
+
+        this.collectables = []
 
     }
 
@@ -52,30 +54,42 @@ export default class Game {
         ENGINE.scene.add(mesh)
 
         window.ENVIRONMENT = this.environment = new Environment({
-            model: '../assets/environments/factory.fbx'
+            path: '../assets/environments/factory.fbx'
         })
 
         this.environment.onLoadingFinished.addListener(this.onEnvironmentLoaded.bind(this))
         
     }
 
-    onPlayerLoaded() {
-
-        delete this.assets
-
-        PLAYER.action = 'look-around'
-        GAME.mode = MODES.ACTIVE
-
-    }
-
     onEnvironmentLoaded() {
 
         window.PLAYER = this.player = new Player({
-            model: '../assets/models/girl.fbx',
+            path: '../assets/models/girl.fbx',
             assets: this.assets
         })
 
         this.player.onLoadingFinished.addListener(this.onPlayerLoaded.bind(this))
+        this.player.onMove.addListener(this.onPlayerMove.bind(this))
+
+    }
+
+    onPlayerLoaded() {
+
+        delete this.assets
+        GAME.mode = MODES.ACTIVE
+
+        const usb = new Item('usb', {
+            position: { x: -416, y: 3, z: -472 },
+            scale: 0.3
+        })
+
+        usb.onLoadingFinished.addListener(() => this.collectables.push(usb))
+
+    }
+
+    onPlayerMove(player) {
+
+        // console.log('onPlayerMove', player)
 
     }
 

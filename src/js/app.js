@@ -33,6 +33,12 @@ class App {
 
 		// init
 
+		// this.animations = ['ascend-stairs', 'climb-ladder', 'climb-rope', 'gather-objects', 'look-around', 'punch', 'push-button', 'run', 'stumble-backwards']
+        this.animations = ['ascend-stairs', 'gather-objects', 'look-around', 'push-button', 'run', 'stumble-backwards']
+        this.models = ['girl']
+        this.items = ['usb']
+        this.environments = ['factory']
+
 		this.preload()
 
 	}
@@ -40,7 +46,11 @@ class App {
 	preload() {
 
 		GAME.mode = MODES.PRELOAD
-		GAME.animations.forEach((animation) => GAME.assets[animation] = `../assets/animations/${ animation }.fbx`)
+
+		this.animations.forEach((anim) => GAME.assets[anim] = `../assets/animations/${ anim }.fbx`)
+		this.models.forEach((model) => GAME.assets[model] = `../assets/models/${ model }.fbx`)
+		this.items.forEach((item) => GAME.assets[item] = `../assets/items/${ item }.fbx`)
+		this.environments.forEach((env) => GAME.assets[env] = `../assets/environments/${ env }.fbx`)
 
 		this.preloader = new Preloader({ assets: Object.values(GAME.assets), oncomplete: this.init.bind(this) })
 
@@ -90,7 +100,7 @@ export default new App()
 
 window.onError = (error) => console.error(JSON.stringify(error))
 window.stop = () => window.STOP = true
-window.start = (oneFrame = false) => {
-	if (!oneFrame) window.STOP = false
+window.start = (once = false) => {
+	if (!once) window.STOP = false
 	GAME.render()
 }
