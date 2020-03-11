@@ -12,6 +12,7 @@ export default class Player extends Model {
 		super({ path, name: 'Character' })
 
 		this.onMove = new Dispatcher()
+		this.onAction = new Dispatcher()
 
 		KEYBOARD.onDirection.addListener(this.onControlsInput.bind(this))
 		JOYSTICK.onDirection.addListener(this.onControlsInput.bind(this))
@@ -113,7 +114,7 @@ export default class Player extends Model {
         overhead.parent = parent
         
 		const collect = new THREE.Object3D()
-		collect.position.set(40, 82, 94)
+		collect.position.set(40, 62, 124)
 		collect.quaternion.set(0.07133122876303646, -0.17495722675648318, -0.006135162916936811, -0.9819695435118246)
         collect.parent = parent
         
@@ -138,7 +139,8 @@ export default class Player extends Model {
 
 		for (let [i, key] of keys.entries()) {
 
-			if (this._viewpoint != this._viewpoints[key]) continue
+			if (this.view != this._viewpoints[key]) continue
+			if (keys[i + 1] == 'collect') continue
 
 			next = i + 1
 			break
@@ -150,7 +152,7 @@ export default class Player extends Model {
 	}
 
 	get action() { return this._animation }
-	set action(name){
+	set action(name) {
 
 		if (!this._animations[name]) name = 'walk'
 
@@ -161,22 +163,29 @@ export default class Player extends Model {
 
         this.mixer.stopAllAction()
         
-        if (this.action == 'gather-objects') delete this.mixer._listeners['finished']
+        if (this.action == 'gather-objects') {
+			delete this.mixer._listeners['finished']
+			this.view = 'back'
+		}
 
         if (name == 'gather-objects'){
-            action.loop = THREE.LoopOnce
-            this.mixer.addEventListener('finished', () => this.action = 'look-around')
+			action.loop = THREE.LoopOnce
+			this.view = 'front'
+            this.mixer.addEventListener('finished', () => {
+				this.onAction.notify({ name })
+				this.action = 'look-around'
+			})
         }
 
 		this._animation = name
-		action.timeScale = (name == 'walk' && this.direction.z < 0) ? -0.3 : 1
+		action.timeScale = (this.direction.z < 0) ? -0.5 : 1
 		action.fadeIn(0.5)
 		action.play()
 
 		this.velocity = (name == 'run') ? 250 : 100
 		
 		this.actionTime = Date.now()
-        
+
 	}
 
 	get view() { return this._viewpoint }
@@ -224,7 +233,7 @@ export default class Player extends Model {
         
         intersect = this.checkIntersection({ position, direction, environment, threshold: 50 })
 		if (!intersect && this.direction.z > 0) this.mesh.translateZ(dt * this.velocity)
-		else if (!intersect && this.direction.z < 0) this.mesh.translateZ(-dt * 40)
+		else if (!intersect && this.direction.z < 0) this.mesh.translateZ(-dt * 50)
 
         // rotate around x-axis
 

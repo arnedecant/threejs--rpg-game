@@ -75,3 +75,15 @@
 .inventory > li[data-name]:active {
     transform: scale(0.9);
 }
+
+.animation__add-item {
+    width: calc(100% - 4rem);
+    height: calc(100% - 4rem);
+    max-width: 10rem;
+    max-height: 10rem;
+}
+
+.animation__add-item img {
+    width: 50%;
+    height: auto;
+}

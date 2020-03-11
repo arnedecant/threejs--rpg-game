@@ -33,7 +33,11 @@ export default class Game {
 
         this.assets = {}
 
-        this.collectables = []
+        this.collectables = [] // all collectable items
+        this.collect = null // to collect = first item from this.collectables within range
+        this.range = {
+            collect: 100
+        }
 
     }
 
@@ -70,6 +74,7 @@ export default class Game {
 
         this.player.onLoadingFinished.addListener(this.onPlayerLoaded.bind(this))
         this.player.onMove.addListener(this.onPlayerMove.bind(this))
+        this.player.onAction.addListener(this.onPlayerAction.bind(this))
 
     }
 
@@ -87,15 +92,44 @@ export default class Game {
 
     }
 
-    onPlayerMove(player) {
+    onPlayerMove(player = PLAYER) {
 
-        // console.log('onPlayerMove', player)
+        this.collect = this.collectables.find((item) => {
+
+            if (!item.model.mesh.visible) return false
+            if (player.mesh.position.distanceTo(item.model.mesh.position) > this.range.collect) return false
+
+            return item
+
+        })
+
+        if (this.collect) INTERFACE.enable('interact')
 
     }
 
-    click(e) {
+    onPlayerAction({ name, state = 'finished' }) {
 
-        
+        if (state != 'finished') return
+
+        switch (name) {
+
+            case 'gather-objects':
+                INTERFACE.inventory.add(this.collect)
+                break
+
+        }
+
+    }
+
+    click({ action, e }) {
+
+        switch (action) {
+
+            case 'interact': 
+                PLAYER.action = 'gather-objects'
+                break
+
+        }
 
     }
 

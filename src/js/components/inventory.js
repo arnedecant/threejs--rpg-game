@@ -20,17 +20,17 @@ export default class Inventory extends Component {
 
     }
     
-    add(name) {
+    add(item, visibility = false) {
 
         if (this.items.length >= this.maxItems) {
             alert('Inventory full')
             return
         }
 
-        if (!GAME || GAME.items[name]) return
-
-        this.items.push(GAME.items[name])
+        this.items.push(item)
         this._fill()
+
+        item.model.mesh.visible = visibility
 
     }
 

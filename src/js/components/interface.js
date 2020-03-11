@@ -10,7 +10,9 @@ export default class Interface extends Component {
 	init() {
 
         this.inventory = new Inventory('[data-component="inventory"]')
-        this.$buttons = [...this.element.querySelectorAll('[data-button]')]
+
+        // this does not work as this loses its connection with the dom
+        // this.$buttons = [...this.element.querySelectorAll('[data-button]')]
 
     }
     
@@ -30,16 +32,8 @@ export default class Interface extends Component {
 
     _find(name) {
 
-        return this.$buttons.find(($button) => $button.dataset.button = name)
-
-        // return this.$buttons.find(($button) => {
-
-        //     if (!$button.dataset || !$button.dataset.button) return false
-        //     if ($button.dataset.button != name) return false
-
-        //     return $button
-
-        // })
+        return this.element.querySelector(`[data-button="${ name }"]`)
+        // return this.$buttons.find(($button) => $button.dataset.button = name)
 
     }
 
@@ -60,7 +54,7 @@ export default class Interface extends Component {
                 return
         }
 
-		this.onClick.notify(e.target)
+		this.onClick.notify({ action: e.target.dataset.button, e })
 
 	}
 
