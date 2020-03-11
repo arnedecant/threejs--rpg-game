@@ -60,30 +60,35 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    // opacity: 0.5;
-    transition: opacity 0.2s ease;
+    animation: fade-in .6s ease;
 }
 
 .inventory > li[data-name]:hover {
     border-color: rgba(var(--rgb-primary), 1);
 }
 
-.inventory > li[data-name]:hover img {
-    // opacity: 1;
-}
-
 .inventory > li[data-name]:active {
     transform: scale(0.9);
 }
 
-.animation__add-item {
+.inventory__animation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
     width: calc(100% - 4rem);
     height: calc(100% - 4rem);
-    max-width: 10rem;
-    max-height: 10rem;
+    max-width: 7.5rem;
+    max-height: 12rem;
+    pointer-events: none;
 }
 
-.animation__add-item img {
-    width: 50%;
+.inventory__animation img {
+    width: 100%;
     height: auto;
+    display: none;
+}
+
+.inventory__animation.animate img {
+    display: block;
+    animation: inventory__bottom-left 1.5s ease;
 }

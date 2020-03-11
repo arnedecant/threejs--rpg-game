@@ -14,6 +14,9 @@ export default class Inventory extends Component {
         this.items = []
         this.maxItems = this.options.maxItems || 9
 
+        this.$animation = document.querySelector('.inventory__animation')
+        this.$animationImg = this.$animation.querySelector('img')
+
         this.onToggle = new Dispatcher()
 
         this.clear()
@@ -26,6 +29,10 @@ export default class Inventory extends Component {
             alert('Inventory full')
             return
         }
+
+        this.$animationImg.src = item.icon.replace('../', '')
+        this.$animation.classList.add('animate')
+        this.$animationImg.addEventListener('animationend', (e) => this.$animation.classList.remove('animate'))
 
         this.items.push(item)
         this._fill()
