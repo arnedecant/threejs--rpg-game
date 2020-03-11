@@ -8,7 +8,7 @@
 	"targets": [
 		{
 			"id": "index",
-			"seo-title": "ThreeJS RPG game",
+			"seo-title": "Lost Treasure - The mystery puzzle game",
 			"seo-description": "",
 			"src-html": "index.html",
 			"src-sass": "main.scss",

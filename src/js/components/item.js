@@ -23,9 +23,11 @@ export default class Item extends Component {
         this.template = document.querySelector('template[data-name="item"]').content.cloneNode(true)
         this.element = this.template.querySelector('li')
         this.$img = this.element.querySelector('img')
+        this.$svg = this.element.querySelector('svg > use')
 
         this.element.dataset.name = name
-        this.$img.src = this.icon
+        if (this.$img) this.$img.src = this.icon
+        if (this.$svg) this.$svg.setAttribute('xlink:href', `#icon-${ this.name }`)
 
         this.onLoadingFinished = new Dispatcher()
         this.model.onLoadingFinished.addListener(() => this.onLoadingFinished.notify())

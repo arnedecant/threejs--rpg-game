@@ -1,5 +1,11 @@
 [class*="align__"] {
 	position: fixed;
+	display: flex;
+	margin: -0.25rem;
+
+	& > * {
+		margin: 0.25rem;
+	}
 
 	&[class*="left"] {
 		left: 2rem;

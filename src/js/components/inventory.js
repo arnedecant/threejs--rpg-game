@@ -16,6 +16,8 @@ export default class Inventory extends Component {
 
         this.$animation = document.querySelector('.inventory__animation')
         this.$animationImg = this.$animation.querySelector('img')
+        this.$animationSvg = this.$animation.querySelector('svg')
+        this.$animationUse = this.$animationSvg ? this.$animationSvg.querySelector('use') : undefined
 
         this.onToggle = new Dispatcher()
 
@@ -30,9 +32,12 @@ export default class Inventory extends Component {
             return
         }
 
-        this.$animationImg.src = item.icon.replace('../', '')
+        if (this.$animationImg) this.$animationImg.src = item.icon.replace('../', '')
+        if (this.$animationUse) this.$animationUse.setAttribute('xlink:href', `#icon-${ item.name }`)
         this.$animation.classList.add('animate')
-        this.$animationImg.addEventListener('animationend', (e) => this.$animation.classList.remove('animate'))
+
+        if (this.$animationImg) this.$animationImg.addEventListener('animationend', (e) => this.$animation.classList.remove('animate'))
+        if (this.$animationSvg) this.$animationSvg.addEventListener('animationend', (e) => this.$animation.classList.remove('animate'))
 
         this.items.push(item)
         this._fill()

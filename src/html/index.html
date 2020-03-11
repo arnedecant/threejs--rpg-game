@@ -124,15 +124,19 @@
 </head>
 <body>
 
+	@@include('./icons/icons.html')
 	@@include('./components/item.html')
 	@@include('./controls/joystick.html')
 
 	<main class="interface" data-component="interface">
 		<ul class="inventory" data-component="inventory"></ul>
+		<div class="align__top-right">
+			<button class="btn btn-round" data-button="camera"><i class="fas fa-video"></i></button>
+			<button class="btn btn-round" data-button="camera"><i class="fas fa-volume-up"></i></button>
+		</div>
 		<button class="btn btn-round align__bottom-left" data-button="inventory"><i class="fas fa-briefcase"></i></button>
 		<button class="btn btn-round align__bottom-right" data-button="interact" disabled><i class="fas fa-hand-point-up"></i></button>
-		<button class="btn btn-round align__top-right" data-button="camera"><i class="fas fa-video"></i></button>
-		<div class="inventory__animation align__bottom-left"><img src=""></div>
+		<div class="inventory__animation align__bottom-left"><svg class="icon"><use xlink:href=""></use></svg></div>
 	</main>
 
 	<!-- SHADERS /////////////////////////////////////////////////// -->
