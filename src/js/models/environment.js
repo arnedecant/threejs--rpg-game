@@ -8,7 +8,7 @@ export default class Environment extends Model {
 
     init() {
 
-        this.doors = []
+        this.gates = []
         this.fans = []
 
     }
@@ -19,13 +19,13 @@ export default class Environment extends Model {
         mesh.scale.set(0.8, 0.8, 0.8)
         mesh.name = 'Environment'
 
-        let door = { trigger: null, proxy: [], doors: [] }
+        let gate = { trigger: null, proxy: [], doors: [] }
         
         mesh.traverse((child) => {
 
             let name = child.name.toLowerCase()
 
-            if (name.includes('door-null')) door.trigger = child
+            if (name.includes('door-null')) gate.trigger = child
 
             if (!child.isMesh) return
             
@@ -37,14 +37,14 @@ export default class Environment extends Model {
                 this.proxy = child
             } else if (name.includes('door-proxy')) {
                 child.material.visible = false
-                door.proxy.push(child)
+                gate.proxy.push(child)
             } else if (name.includes('door')) {
-                door.doors.push(child)
+                gate.doors.push(new Model({ name: 'door', mesh: child }))
             } else if (child.name.includes('fan')) {
-                this.fans.push(child)
+                this.fans.push(new Model({ name: 'fan', mesh: child }))
             }
 
-            if (name.includes('door')) door = this.checkDoor(door)
+            if (name.includes('door')) gate = this.checkGate(gate)
 
         })
         
@@ -55,14 +55,33 @@ export default class Environment extends Model {
 
     }
 
-    checkDoor(door) {
+    checkGate(gate) {
 
-        if (door.trigger !== null && door.proxy.length == 2 && door.doors.length == 2) {
-            this.doors.push({...door})
-            door = { trigger: null, proxy: [], doors: [] }
+        if (gate.trigger !== null && gate.proxy.length == 2 && gate.doors.length == 2) {
+            this.gates.push({ ...gate })
+            gate = { trigger: null, proxy: [], doors: [] }
         }
 
-        return door
+        return gate
+
+    }
+
+    render(dt) {
+
+        let fanVolume = 0
+
+        this.fans.forEach((fan) => {
+
+            const distance = fan.mesh.position.distanceTo(PLAYER.mesh.position)
+            const tmpVolume = 1 - distance / 1000
+
+            if (tmpVolume > fanVolume) fanVolume = tmpVolume
+
+            fan.mesh.rotateZ(dt)
+
+        })
+
+        GAME.audio.fan.volume = fanVolume
 
     }
 

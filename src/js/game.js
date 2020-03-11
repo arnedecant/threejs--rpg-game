@@ -8,6 +8,7 @@ import Environment from './models/environment'
 import JoyStick from './controls/joystick'
 import Keyboard from './controls/keyboard'
 import Item from './components/item'
+import Audio from './helpers/audio'
 
 export default class Game {
 
@@ -32,6 +33,8 @@ export default class Game {
         this.mode = MODES.NONE
 
         this.assets = {}
+        this.audio = {}
+        this.mute = false
 
         this.collectables = [] // all collectable items
         this.collect = null // to collect = first item from this.collectables within range
@@ -57,12 +60,33 @@ export default class Game {
         
         ENGINE.scene.add(mesh)
 
+        this.setupAudio()
+
         window.ENVIRONMENT = this.environment = new Environment({
             path: '../assets/environments/factory.fbx'
         })
 
         this.environment.onLoadingFinished.addListener(this.onEnvironmentLoaded.bind(this))
         
+    }
+
+    setupAudio() {
+
+        return
+
+        const sounds = ['gliss', 'door', 'factory', 'button', 'fan']
+        
+        sounds.forEach((sound) => {
+
+            this.audio[sound] = new Audio({
+                name: sound,
+                loop: (sound == 'factory' || sound == 'fan'),
+                autoplay: (sound == 'factory' || sound == 'fan'),
+                volume: 0.3
+            })
+            
+        })
+
     }
 
     onEnvironmentLoaded() {
@@ -121,10 +145,33 @@ export default class Game {
 
     }
 
+    toggleAudio() {
+
+        this.mute = !this.mute
+        
+        if (!this.mute) {
+
+            this.audio.factory.play()
+            this.audio.fan.play()
+
+            return
+        
+        } 
+        
+        Object.values(this.audio).forEach((a) => a.stop())
+        
+    }
+
     click({ action, e }) {
 
         switch (action) {
 
+            case 'camera':
+                PLAYER.toggleView()
+                break
+            case 'mute':
+                this.toggleAudio()
+                break
             case 'interact': 
                 PLAYER.action = 'gather-objects'
                 break
@@ -139,8 +186,9 @@ export default class Game {
 
         const dt = CLOCK.getDelta()
         
-        PLAYER.render(dt)
         ENGINE.render(dt)
+        ENVIRONMENT.render(dt)
+        PLAYER.render(dt)
 		
     }
     

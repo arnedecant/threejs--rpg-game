@@ -83,12 +83,14 @@ class App {
 
 	render(timestamp) {
 
-		GAME.render(timestamp)
-		ENGINE.render(timestamp)
-
         if (window.STOP) return
 
 		window.requestAnimationFrame(this.render.bind(this))
+
+		if (GAME.mode != MODES.ACTIVE) return
+
+		GAME.render(timestamp)
+		ENGINE.render(timestamp)
 
 	}
 

@@ -42,3 +42,7 @@ main.interface {
 	height: 100vh;
 	z-index: 999;
 }
+
+canvas {
+	background-color: var(--color-secondary);
+}

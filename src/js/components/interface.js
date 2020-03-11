@@ -42,16 +42,11 @@ export default class Interface extends Component {
 		if (e.target == this.element) e.preventDefault()
 
         switch (e.target.dataset.button) {
-            case 'camera':
-                GAME.player.toggleView()
-                break
-            case 'interact':
-                break
+
             case 'inventory':
 				this.inventory.toggle()
                 break
-            default: 
-                return
+                
         }
 
 		this.onClick.notify({ action: e.target.dataset.button, e })
