@@ -13,10 +13,10 @@ export default class Item extends Component {
         super()
 
         this.name = name
-        this.icon = `../assets/icons/${ name }.jpg`
+        this.icon = `assets/icons/${ name }.jpg`
         this.model = new Model({
             name: name,
-            path: `../assets/items/${ name }.fbx`,
+            path: `assets/items/${ name }.fbx`,
             ...options
         })
 
