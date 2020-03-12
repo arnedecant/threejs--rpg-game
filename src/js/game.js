@@ -34,7 +34,7 @@ export default class Game {
 
         this.assets = {}
         this.audio = {}
-        this.mute = false
+        this.mute = true
 
         this.collectables = [] // all collectable items
         this.collect = null // to collect = first item from this.collectables within range
@@ -76,13 +76,14 @@ export default class Game {
 
     setupAudio() {
 
-        return
+        this.audioContext = new AudioContext()
 
-        const sounds = ['gliss', 'door', 'factory', 'button', 'fan']
+        const sounds = ['gliss', 'gates', 'factory', 'button', 'fan']
         
         sounds.forEach((sound) => {
 
             this.audio[sound] = new Audio({
+                context: this.audioContext,
                 name: sound,
                 loop: (sound == 'factory' || sound == 'fan'),
                 autoplay: (sound == 'factory' || sound == 'fan'),
@@ -90,6 +91,10 @@ export default class Game {
             })
             
         })
+
+
+
+        console.log(APP.audioContext)
 
     }
 
@@ -134,6 +139,7 @@ export default class Game {
         this.interact = ENVIRONMENT.gates.find((gate) => {
 
             // if (!gate.model.mesh.visible) return false
+            if (!gate.trigger || !gate.trigger.position) return false
             if (player.mesh.position.distanceTo(gate.trigger.position) > this.range.interact) return false
 
             return gate
@@ -141,6 +147,7 @@ export default class Game {
         })
 
         if (this.collect || this.interact) INTERFACE.enable('interact')
+        else INTERFACE.disable('interact')
 
     }
 
@@ -152,9 +159,11 @@ export default class Game {
 
             case 'gather-objects':
                 INTERFACE.inventory.add(this.collect)
+                INTERFACE.enable()
                 break
             case 'push-button':
                 ENVIRONMENT.openGate(this.interact)
+                break
 
         }
 
@@ -162,16 +171,31 @@ export default class Game {
 
     onCutscene({ name, status = 'end' }) {
 
-        if (status != 'end') return
+        switch (status) {
 
-        console.log('cutscene end')
-        PLAYER.view = 'back'
+            case 'start':
+
+                INTERFACE.disable()
+
+                if (name == 'gates') {
+                    console.log('play gates')
+                    this.audio.gates.play(1)
+					this.audio.button.play(1)
+                }
+
+                break
+
+            case 'end':
+
+                INTERFACE.enable()
+                PLAYER.view = 'back'
+
+                break
+        }
 
     }
 
     toggleAudio() {
-
-        return
 
         this.mute = !this.mute
         
@@ -179,6 +203,8 @@ export default class Game {
 
             this.audio.factory.play()
             this.audio.fan.play()
+
+            this.audioContext.resume()
 
             return
         
@@ -199,6 +225,7 @@ export default class Game {
                 this.toggleAudio()
                 break
             case 'interact': 
+                INTERFACE.disable()
                 if (this.collect) PLAYER.action = 'gather-objects'
                 if (this.interact) PLAYER.action = 'push-button'
                 break

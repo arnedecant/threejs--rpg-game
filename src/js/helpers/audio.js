@@ -6,10 +6,8 @@ export default class Audio {
 
 	constructor(options = {}) {
 
-		if (!APP.audioContext) APP.audioContext = new (window.AudioContext || window.webkitAudioContext)()
-
 		this.name = options.name
-		this.context = APP.audioContext
+		this.context = options.context || GAME.audioContext
 
 		this._volume = (options.volume != undefined) ? options.volume : 1.0
 
@@ -24,27 +22,14 @@ export default class Audio {
 		this.autoplay = (options.autoplay == undefined) ? false : options.autoplay
 		this.buffer = null
 
-		let codecs = ['mp3', 'ogg', 'xmp']
+		options.src = {}
 
-		if (!options.src) options.src = {}
-		if (!options.src && this.name) codecs.forEach((codec) => options.src[codec] = `../assets/${ this.name }.${ codec }`)
+		const codecs = ['mp3', 'ogg', 'xmp']
+		let codec = codecs.find((c) => Audio.supportsAudioType(c))
 		
-        let codec
-        
-		for (let prop in options.src) {
-
-            if (!Audio.supportsAudioType(prop)) continue
-
-			codec = prop
-            break
-            
-		}
-		
-		if (codec != undefined) {
-            
-			this.path = options.src[codec]
+		if (codec) {
+			this.path = `assets/audio/${ this.name }.${ codec }`
             this.load(this.path)
-            
 		} else {
 			console.warn("Browser does not support any of the supplied audio files")
         }
@@ -108,7 +93,9 @@ export default class Audio {
         
 	}
 	
-	play() {
+	play(volume) {
+
+		if (volume) this.volume = volume
 
 		if (this.buffer == null) return
         if (this.source != undefined) this.source.stop()

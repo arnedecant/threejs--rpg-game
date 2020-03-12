@@ -28,8 +28,8 @@ class App {
 		// events
 
 		window.addEventListener('resize', this.resize.bind(this), false)
-		window.addEventListener('mousemove', this.mousemove.bind(this))
-		document.body.addEventListener('click', this.click.bind(this))
+		// window.addEventListener('mousemove', this.mousemove.bind(this))
+		// document.body.addEventListener('click', this.click.bind(this))
 
 		// init
 
@@ -47,10 +47,10 @@ class App {
 
 		GAME.mode = MODES.PRELOAD
 
-		this.animations.forEach((anim) => GAME.assets[anim] = `../assets/animations/${ anim }.fbx`)
-		this.models.forEach((model) => GAME.assets[model] = `../assets/models/${ model }.fbx`)
-		this.items.forEach((item) => GAME.assets[item] = `../assets/items/${ item }.fbx`)
-		this.environments.forEach((env) => GAME.assets[env] = `../assets/environments/${ env }.fbx`)
+		this.animations.forEach((anim) => GAME.assets[anim] = `assets/animations/${ anim }.fbx`)
+		this.models.forEach((model) => GAME.assets[model] = `assets/models/${ model }.fbx`)
+		this.items.forEach((item) => GAME.assets[item] = `assets/items/${ item }.fbx`)
+		this.environments.forEach((env) => GAME.assets[env] = `assets/environments/${ env }.fbx`)
 
 		this.preloader = new Preloader({ assets: Object.values(GAME.assets), oncomplete: this.init.bind(this) })
 

@@ -126,11 +126,11 @@ export default class Player extends Model {
 	}
     
     onControlsInput({ x, y, z }) {
+        
+		this.direction = { x, y, z }
 
 		if (z != 0 && (this.action != 'walk' && this.action != 'run')) this.action = 'walk'
         else if (z == 0 && (this.action == 'walk' || this.action == 'run')) this.action = 'look-around'
-        
-		this.direction = { x, y, z }
         
 	}
 
@@ -160,8 +160,6 @@ export default class Player extends Model {
 
 		const anim = this._animations[name]
         const action = this.mixer.clipAction(anim,  this.root)
-        
-        action.time = 0
 
 		this.mixer.stopAllAction()
 		
@@ -183,8 +181,9 @@ export default class Player extends Model {
 
 		this._animation = name
 
-		action.timeScale = (this.direction.z < 0) ? -0.5 : 1
+		action.timeScale = (name == 'walk' && this.direction.z < 0) ? -0.75 : 1
 		action.fadeIn(0.5)
+        action.time = 0
 		action.play()
 
 		this.velocity = (name == 'run') ? 250 : 100
@@ -223,6 +222,8 @@ export default class Player extends Model {
 
 	move(dt) {
 
+		// dt = 0.01
+
 		const threshold = 80
 		const gravity = 30
 		const environment = GAME.environment.proxy
@@ -238,7 +239,7 @@ export default class Player extends Model {
         
         intersect = this.checkIntersection({ position, direction, environment, threshold: 50 })
 		if (!intersect && this.direction.z > 0) this.mesh.translateZ(dt * this.velocity)
-		else if (!intersect && this.direction.z < 0) this.mesh.translateZ(-dt * 50)
+		else if (!intersect && this.direction.z < 0) this.mesh.translateZ(-dt * 75)
 
         // rotate around x-axis
 

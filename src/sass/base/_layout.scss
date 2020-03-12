@@ -41,6 +41,14 @@ main.interface {
 	width: 100%;
 	height: 100vh;
 	z-index: 999;
+	opacity: 1;
+
+	transition: opacity .2s ease;
+
+	&[disabled] {
+		pointer-events: none;
+		opacity: 0;
+	}
 }
 
 canvas {

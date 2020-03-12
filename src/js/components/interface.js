@@ -18,15 +18,24 @@ export default class Interface extends Component {
     
     enable(name) {
 
-        const $button = this._find(name)
-        $button.removeAttribute('disabled')
+        if (name) this._enableButton(name)
+        else this.element.removeAttribute('disabled')
 
     }
 
     disable(name) {
 
-        const $button = this._find(name)
-        $button.setAttribute('disabled', 'disabled')
+        if (name) this._disableButton(name)
+        else this.element.setAttribute('disabled', 'disabled')
+
+    }
+
+    toggle(name) {
+
+        let $button = this._find(name)
+        
+        if ($button.hasAttribute('disabled')) this.enable($button)
+        else this.disable($button)
 
     }
 
@@ -34,6 +43,38 @@ export default class Interface extends Component {
 
         return this.element.querySelector(`[data-button="${ name }"]`)
         // return this.$buttons.find(($button) => $button.dataset.button = name)
+
+    }
+
+    _enableButton(name) {
+
+        let $button = name
+        if (typeof $button === 'string') $button = this._find(name)
+
+        $button.removeAttribute('disabled')
+
+    }
+
+    _disableButton(name) {
+
+        let $button = name
+        if (typeof $button === 'string') $button = this._find(name)
+
+        $button.setAttribute('disabled', 'disabled')
+
+    }
+
+    toggleAudio() {
+
+        let $icon = this.element.querySelector('[data-button="mute"] > i')
+
+        if ($icon.classList.contains('fa-volume-up')) {
+            $icon.classList.remove('fa-volume-up')
+            $icon.classList.add('fa-volume-mute')
+        } else {
+            $icon.classList.remove('fa-volume-mute')
+            $icon.classList.add('fa-volume-up')
+        }
 
     }
 
@@ -45,6 +86,9 @@ export default class Interface extends Component {
 
             case 'inventory':
 				this.inventory.toggle()
+                break
+            case 'mute':
+                this.toggleAudio()
                 break
                 
         }

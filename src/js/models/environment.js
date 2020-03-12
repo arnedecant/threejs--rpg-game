@@ -131,14 +131,20 @@ export default class Environment extends Model {
             const rightIndex = this.tweens.push(rightTween) - 1
 
             leftTween.onComplete.addListener(() => {
+
                 this.tweens.splice(leftIndex, 1)
                 leftProxy.position.copy(left.mesh.position)
+
             })
 
             rightTween.onComplete.addListener(() => {
+
                 this.tweens.splice(rightIndex, 1)
                 rightProxy.position.copy(right.mesh.position)
+
+                delete gate.trigger
                 this.onCutscene.notify({ status: 'end', name: 'gates' })
+                
             })
 
         })
@@ -154,20 +160,20 @@ export default class Environment extends Model {
 
     renderFans(dt) {
 
-        let fanVolume = 0
+        let volume = 0
 
         this.fans.forEach((fan) => {
 
             const distance = fan.mesh.position.distanceTo(PLAYER.mesh.position)
             const tmpVolume = 1 - distance / 1000
 
-            if (tmpVolume > fanVolume) fanVolume = tmpVolume
+            if (tmpVolume > volume) volume = tmpVolume
 
             fan.mesh.rotateZ(dt)
 
         })
 
-        if (GAME.audio.fan) GAME.audio.fan.volume = fanVolume
+        if (GAME.audio.fan) GAME.audio.fan.volume = volume
 
     }
 
