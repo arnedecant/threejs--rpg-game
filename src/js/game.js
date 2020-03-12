@@ -66,7 +66,7 @@ export default class Game {
         this.setupAudio()
 
         window.ENVIRONMENT = this.environment = new Environment({
-            path: '../assets/environments/factory.fbx'
+            path: 'assets/environments/factory.fbx'
         })
 
         this.environment.onLoadingFinished.addListener(this.onEnvironmentLoaded.bind(this))
@@ -86,15 +86,13 @@ export default class Game {
                 context: this.audioContext,
                 name: sound,
                 loop: (sound == 'factory' || sound == 'fan'),
-                autoplay: (sound == 'factory' || sound == 'fan'),
+                autoplay: false,
                 volume: 0.3
             })
             
         })
-
-
-
-        console.log(APP.audioContext)
+        
+        this.toggleAudio(true) // always muted at first
 
     }
 
@@ -195,10 +193,12 @@ export default class Game {
 
     }
 
-    toggleAudio() {
+    toggleAudio(mute) {
 
-        this.mute = !this.mute
-        
+        this.mute = (mute !== undefined) ? mute : !this.mute 
+
+        Object.values(this.audio).forEach((a) => a.stop())
+
         if (!this.mute) {
 
             this.audio.factory.play()
@@ -208,9 +208,7 @@ export default class Game {
 
             return
         
-        } 
-        
-        Object.values(this.audio).forEach((a) => a.stop())
+        }
         
     }
 
