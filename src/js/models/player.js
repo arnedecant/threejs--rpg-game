@@ -19,6 +19,8 @@ export default class Player extends Model {
 
 		this.direction = KEYBOARD.direction
 
+		this.loopOnce = ['push-button', 'gather-objects']
+
 		this._animations = {}
 		this._animation
 		this._viewpoints = {}
@@ -118,7 +120,7 @@ export default class Player extends Model {
 		collect.quaternion.set(0.07133122876303646, -0.17495722675648318, -0.006135162916936811, -0.9819695435118246)
         collect.parent = parent
         
-		this._viewpoints = { front, back, wide, overhead, collect }
+		this._viewpoints = { front, back, wide, overhead, collect, none: null }
 		this._viewpoint = this._viewpoints.back
 
 	}
@@ -140,7 +142,7 @@ export default class Player extends Model {
 		for (let [i, key] of keys.entries()) {
 
 			if (this.view != this._viewpoints[key]) continue
-			if (keys[i + 1] == 'collect') continue
+			if (keys[i + 1] == 'collect' || keys[i + 1] == 'none') continue
 
 			next = i + 1
 			break
@@ -161,23 +163,26 @@ export default class Player extends Model {
         
         action.time = 0
 
-        this.mixer.stopAllAction()
-        
-        if (this.action == 'gather-objects') {
-			delete this.mixer._listeners['finished']
-			this.view = 'back'
-		}
+		this.mixer.stopAllAction()
+		
+		if (this.loopOnce.includes(this.action)) delete this.mixer._listeners['finished']
+        if (this.action == 'gather-objects') this.view = 'back'
+		if (this.action == 'push-button') this.view = 'none'
 
-        if (name == 'gather-objects'){
+        if (this.loopOnce.includes(name)) {
+
 			action.loop = THREE.LoopOnce
-			this.view = 'front'
-            this.mixer.addEventListener('finished', () => {
+
+			this.mixer.addEventListener('finished', () => {
 				this.onAction.notify({ name })
 				this.action = 'look-around'
 			})
-        }
+		}
+
+		if (name == 'gather-objects') this.view = 'front'
 
 		this._animation = name
+
 		action.timeScale = (this.direction.z < 0) ? -0.5 : 1
 		action.fadeIn(0.5)
 		action.play()
@@ -191,7 +196,7 @@ export default class Player extends Model {
 	get view() { return this._viewpoint }
 	set view(name) {
 
-		this._viewpoint = this._viewpoints[name] ? this._viewpoints[name] : this._viewpoints.back
+		this._viewpoint = (name in this._viewpoints) ? this._viewpoints[name] : this._viewpoints.back
 
 	}
 
@@ -237,7 +242,7 @@ export default class Player extends Model {
 
         // rotate around x-axis
 
-        this.mesh.rotateY(this.direction.x * -dt)
+		if (this.direction.x != 0) this.mesh.rotateY(this.direction.x * -dt)
         
         // left boundary
 

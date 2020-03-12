@@ -1,19 +1,21 @@
 import Easing from './easing'
+import Dispatcher from './dispatcher'
 
 export default class Tween {
 
-	constructor(target, channel, endValue, duration, oncomplete, easing = 'inOutQuad') {
+	constructor({ target, channel, endValue, duration, easing = 'inOutQuad' }) {
 
 		this.target = target
 		this.channel = channel
-		this.oncomplete = oncomplete
 		this.endValue = endValue
-		this.duration = duration
+		this.duration = duration / 1000
 		this.currentTime = 0
-        this.finished = false
+		this.finished = false
+		
+		this.onComplete = new Dispatcher()
         
 		// new Easing(start, end, duration, startTime = 0, type = 'linear')
-        this.easing = new Easing(target[channel], endValue, duration, 0, easing)
+		this.easing = new Easing(this.target[channel], this.endValue, this.duration, 0, easing)
         
 	}
 	
@@ -25,7 +27,7 @@ export default class Tween {
         
         if (this.currentTime >= this.duration) {
 			this.target[this.channel] = this.endValue
-			if (this.oncomplete) this.oncomplete()
+			this.onComplete.notify()
 			this.finished = true
 		} else {
 			this.target[this.channel] = this.easing.value(this.currentTime)

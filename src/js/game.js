@@ -38,8 +38,11 @@ export default class Game {
 
         this.collectables = [] // all collectable items
         this.collect = null // to collect = first item from this.collectables within range
+        this.interact = null
+
         this.range = {
-            collect: 100
+            collect: 100,
+            interact: 150
         }
 
     }
@@ -67,6 +70,7 @@ export default class Game {
         })
 
         this.environment.onLoadingFinished.addListener(this.onEnvironmentLoaded.bind(this))
+        this.environment.onCutscene.addListener(this.onCutscene.bind(this))
         
     }
 
@@ -127,7 +131,16 @@ export default class Game {
 
         })
 
-        if (this.collect) INTERFACE.enable('interact')
+        this.interact = ENVIRONMENT.gates.find((gate) => {
+
+            // if (!gate.model.mesh.visible) return false
+            if (player.mesh.position.distanceTo(gate.trigger.position) > this.range.interact) return false
+
+            return gate
+
+        })
+
+        if (this.collect || this.interact) INTERFACE.enable('interact')
 
     }
 
@@ -140,12 +153,25 @@ export default class Game {
             case 'gather-objects':
                 INTERFACE.inventory.add(this.collect)
                 break
+            case 'push-button':
+                ENVIRONMENT.openGate(this.interact)
 
         }
 
     }
 
+    onCutscene({ name, status = 'end' }) {
+
+        if (status != 'end') return
+
+        console.log('cutscene end')
+        PLAYER.view = 'back'
+
+    }
+
     toggleAudio() {
+
+        return
 
         this.mute = !this.mute
         
@@ -173,7 +199,8 @@ export default class Game {
                 this.toggleAudio()
                 break
             case 'interact': 
-                PLAYER.action = 'gather-objects'
+                if (this.collect) PLAYER.action = 'gather-objects'
+                if (this.interact) PLAYER.action = 'push-button'
                 break
 
         }
