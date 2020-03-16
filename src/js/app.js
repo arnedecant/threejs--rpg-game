@@ -13,7 +13,9 @@ class App {
 		// create new engine: setup scene, camera & lighting
 		// and load vertex and fragment shaders in memory
 
-		window.ENGINE = new Engine({ container: document.body })
+		this.color = 0x605050
+
+		window.ENGINE = new Engine({ container: document.body, backround: this.color })
 		window.GAME = new Game()
 		window.APP = this
 		window.SHADERS = {
@@ -58,8 +60,7 @@ class App {
 
 	init() {
 
-		ENGINE.scene.background = new THREE.Color(0xa0a0a0)
-		ENGINE.scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000)
+		ENGINE.scene.fog = new THREE.Fog(this.color, 1000, 1500)
 		
 		GAME.init()
 	

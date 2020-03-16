@@ -61,10 +61,6 @@ export default class Engine {
 
 		if (this.config.background) this.scene.background = new THREE.Color(this.config.background)
 
-		// add fog to the scene
-
-		this.scene.fog = new THREE.Fog(0x605050, 500, 1500)
-
 		// create the renderer
 
 		this.createRenderer()
