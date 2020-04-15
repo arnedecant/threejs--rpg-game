@@ -99,7 +99,7 @@ export default class Game {
     onEnvironmentLoaded() {
 
         window.PLAYER = this.player = new Player({
-            path: '../assets/models/girl.fbx',
+            path: 'assets/models/girl.fbx',
             assets: this.assets
         })
 
